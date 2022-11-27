@@ -1,2 +1,3 @@
-# DevOps_journey
-In this repository I'll be documenting my DevOps Journey!
+In this Journey I will be documenting my DevOps Journey.
+
+#what is DevOps?
