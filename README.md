@@ -5,9 +5,10 @@
 ## Resources
 
 ## Prequisites
-  - Linux
-  - Git
-  - YAML
+  - [Linux](https://github.com/satyampsoni/DevOps_journey/blob/main/prerequisite/linux.md)
+  - [Git](https://github.com/satyampsoni/DevOps_journey/blob/main/prerequisite/git.md)
+  - [YAML](https://github.com/satyampsoni/DevOps_journey/blob/main/prerequisite/yaml.md)
+  - Networking 
   
 ## DevOps Essentials
   - Kubernetes
