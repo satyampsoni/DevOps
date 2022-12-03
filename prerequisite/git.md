@@ -26,12 +26,11 @@
    - To install Git, run the following command: `sudo apt-get install git-all`.
    - Once the command output has completed, you can verify the installation by typing: `git version`.
     
-# Getting Started
-### Initializing Git
-   - Go to the location of the folder.
-   - In the terminal/Git bash type `git init`.
-   
-Note: All the changes made to the directory are stored in this `.git` folder and this folder is hidden.
+
+# Git commands 
+1. `git  init`: Initializes the empty git repository(creates a .git folder inside the directory)
+2. `git add file_name`: Adds the file or stages the file
+3. 
 
 
 
