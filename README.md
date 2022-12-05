@@ -1,4 +1,5 @@
 ## About the Repo
+In this repository I am documenting my DevOps journey.
 
 ## What is DevOps?
 
