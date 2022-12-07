@@ -57,7 +57,16 @@ Note: You can see what a command does by typing `man <commandname>` right inside
  - `cd ../<foldername>` - Open a previous dir folder.
  - `cd <path>` - Open a dir with the path.
  
- ## 
+ ## Networking
+ - `ip a` - Display all network interfaces and IP address
+ - `ip addr show dev eth0` - display eth0 address and details.
+ - `Ping host` - Send ICMP echo request to host.
+ - `whoisdomain` - Display who is information for domain
+ - `nslookup`- query internet name servers (comes in interactive and non-interactive mode).
+ - `hostname`-  show or set the system hostname
+ - `domainname` - show or set the system domain name
+ - `whoami` - Print the name of the effective user
+ - `ping <domain name>` - Test to see if network device is availaible or not
  
  
  
