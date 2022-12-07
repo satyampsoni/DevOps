@@ -67,6 +67,11 @@ Note: You can see what a command does by typing `man <commandname>` right inside
  - `domainname` - show or set the system domain name
  - `whoami` - Print the name of the effective user
  - `ping <domain name>` - Test to see if network device is availaible or not
+
+## Permissions
+- `chmod u=rwx,g=rxw,o=rwx <file-name>` READ WRITE AND EXECUTE PERMISSIONS
+- `chmod 777 <file-name>` - 4: Read, 2: write, 1: execute
+- `grep <keyword> <file-name>` To check if the certain keyword is present in filename or not
  
  
  
