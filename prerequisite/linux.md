@@ -72,6 +72,14 @@ Note: You can see what a command does by typing `man <commandname>` right inside
 - `chmod u=rwx,g=rxw,o=rwx <file-name>` READ WRITE AND EXECUTE PERMISSIONS
 - `chmod 777 <file-name>` - 4: Read, 2: write, 1: execute
 - `grep <keyword> <file-name>` To check if the certain keyword is present in filename or not
+
+## User information and Management
+- `id` : displays the user and the current user id
+- `last` : display the last user who have logged into your system
+- `who` : show who is logged into your system
+- `w` : who is logged in and what they are doing
+- `userdel <username>`: Delete the name of the user
+
  
  
  
