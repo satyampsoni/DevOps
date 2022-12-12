@@ -1,0 +1,27 @@
+hi: "This is a hello"
+#YAML file exists in key value pair
+
+---
+#Lists
+- apple
+- Mango
+- Banana
+- oranges
+
+# This is a comment in YAML. comments in YAml are initiated by #
+# YAML is case sensitive
+
+---
+#Block style
+
+cities:
+  - New Delhi
+  - Mumbai
+  - Gujrat
+
+# In YAML indentation is extremely important like in Python.
+# YAML documents are seperated by '---'
+
+# --- : used for seperation of YAML
+# ... : used to finish YAML
+

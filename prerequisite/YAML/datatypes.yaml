@@ -1,0 +1,47 @@
+# Datatypes
+# string Variables
+
+# There are three ways to make strings
+myself: satyam soni # simply write the strings
+myname: 'satyam soni' # strings in single quotes
+name: "satyamsoni" # strings in double quotes
+
+# writing single lines in multiple lines
+bio: > 
+  Hey, my name is satyam
+  I am a second year student.
+
+#Integers
+number: 5421
+
+#Floats
+Marks: 98.99
+
+# Bool
+booleanValue: No # n, N, false, False, FALSE
+
+# specify the data types
+zero: !!int 0
+positivenum: !!int 5
+negativenum: !!int -5
+binarynum: !!int 0b11001
+commavalue: !!int +540_000 #540,000
+
+# floating point numbers
+marks: !!float 56.89
+infinity: !!float .inf
+not a num: .nan
+
+# booleans 
+boolvalue: !!bool No
+
+#strings
+message: !!str okay, This is good
+
+# null
+surname: !!null Null #NUll or Null ~
+
+#dates and times
+date: !!timestamp 2022-12-11
+indiatime: 2022-12-11 07:023:05 +5:30
+
