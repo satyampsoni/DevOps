@@ -1,0 +1,82 @@
+#1 sequence data type
+student: !!seq
+  - marks
+  - name 
+  - roll no
+#like this also
+
+#sparse sequence
+#some of the keys will be empty this is known as the sparse seq
+
+sparse seq:
+  - hey
+  - how 
+  -
+  -
+  - null
+  - sup
+
+#Nested sequences
+- 
+  - mango
+  - banan
+- 
+  - marks
+  - roll no
+  - date
+
+  #Maps
+  Maps: !!maps key value pairs are called maps.
+
+  #Nested mappings
+  name: satyam soni
+  role: 
+    age: 19
+    job: student
+
+#pairs: keys may have duplicate values
+#!pairs
+
+pair example: !!pairs
+  -job: student
+  -job: teacher
+
+#set datatypes
+#set will allow you to have unique values
+names: !!set
+  ?satyam
+  ?shivam
+  ?Ankit
+
+#Dictionary !!omap
+
+people : !!omap
+  -satyam:
+    name: satyam soni
+    age: 18
+    height: 6'1
+  
+  - ankit:
+    name: Ankit
+    age: 18
+    height: 6'1
+
+#Reusing the properties
+#use of anchors
+
+# In YAML anchors are initialized by &
+likings: & likes
+  fav fruit: mango
+  dislike: grapes
+
+person1:
+  name: satyam soni
+  <<: likes
+
+person2:
+  name: Ankit Anand
+  <<: likes
+
+
+
+
