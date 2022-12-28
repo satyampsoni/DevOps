@@ -8,7 +8,7 @@ In this repository I am documenting my DevOps journey.
 ## Prequisites
   - [Linux](https://github.com/satyampsoni/DevOps_journey/blob/main/prerequisite/linux.md)
   - [Git](https://github.com/satyampsoni/DevOps_journey/blob/main/prerequisite/git.md)
-  - [YAML](https://github.com/satyampsoni/DevOps_journey/blob/main/prerequisite/yaml.md)
+  - [YAML](https://github.com/satyampsoni/DevOps_journey/tree/main/prerequisite/YAML)
   - Networking 
   
 ## DevOps Essentials
