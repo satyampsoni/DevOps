@@ -13,22 +13,22 @@ DevOps is the intersection between Development and Operations.
 
 ## Contents
   
-## Prequisites
+   ### Prequisites
   - [Linux](https://github.com/satyampsoni/DevOps_journey/blob/main/prerequisite/linux.md)
   - [Git](https://github.com/satyampsoni/DevOps_journey/blob/main/prerequisite/git.md)
   - [YAML](https://github.com/satyampsoni/DevOps_journey/tree/main/prerequisite/YAML)
   - Networking
 
- ## The repository is structured into several directories, each representing a specific aspect of DevOps. They include:
-    - `Docker`: 
-    - `Kubernetes`
-    - `Cloud`
-    - `CI/CD`
-    - `IAC`
-    - `Observability`
-    - `Chaos`
-    - `Policy`
-    - `Service Mesh`
+   ### The repository is structured into several directories, each representing a specific aspect of DevOps. They include:
+    - Docker
+    - Kubernetes
+    - Cloud
+    - CI/CD
+    - IAC
+    - Observability
+    - Chaos
+    - Policy
+    - Service Mesh
 
 ## How to use
 
