@@ -18,8 +18,8 @@ DevOps is the intersection between Development and Operations.
   - Networking 
   
 ## DevOps Essentials
-  - Kubernetes
   - Docker
+  - Kubernetes
   - Cloud
   - CI/CD
   - IAC
