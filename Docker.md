@@ -4,8 +4,9 @@ For instance, if a developer creates an application on their local machine with 
 
 ## What is Docker?
 Docker is a containerization technology that allows you to package your application and its dependencies into a single, lightweight, and portable unit called a container and it allows you to build test and deploy applications and this ensures that your application runs on any environment.
+**
+Let's understand this with the help of an example:**
 
-Let's understand this with the help of an example:
 Imagine you are a chef preparing a dish in your kitchen. You need various ingredients, such as vegetables, spices, and sauces, to make the dish. You have your own set of cooking tools and utensils that you are comfortable with, and you know exactly how to use them to make the perfect dish.
 
 Now, let's say you are asked to cook the same dish in someone else's kitchen, which has a different set of cooking tools and utensils, and the ingredients are arranged differently. You might face some challenges in using the unfamiliar tools, finding the ingredients you need, and adjusting your recipe to suit the new environment.
