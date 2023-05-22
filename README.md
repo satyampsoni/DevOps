@@ -1,6 +1,6 @@
 ## Description
 
-This repository is aimed at providing a comprehensive guide to DevOps. Here, I document my experience and knowledge in DevOps, including tools, concepts, and best practices.
+This repository is aimed at providing a comprehensive guide to DevOps.
 
 ## [What is DevOps?](https://github.com/satyampsoni/DevOps_journey/blob/main/Devops.md)
 DevOps is the intersection between Development and Operations.
