@@ -1,7 +1,3 @@
-# My DevOps Learning Journey
-
-This repository documents my learning journey in DevOps.
-
 ## Description
 
 This repository is aimed at providing a comprehensive guide to DevOps. Here, I document my experience and knowledge in DevOps, including tools, concepts, and best practices.
