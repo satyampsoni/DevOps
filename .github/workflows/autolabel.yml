@@ -1,46 +1,61 @@
-name: Auto Label Issues
+name: Auto Manage Labels
 
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  auto-label:
+  manage-labels:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Parse and label issues
+      - name: Parse and manage labels
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Extract the comment body and the issue number
+          # Extract the comment body and issue number
           COMMENT_BODY=$(jq -r '.comment.body' "$GITHUB_EVENT_PATH")
           ISSUE_NUMBER=$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")
 
-          # Check if the comment starts with a slash (/)
-          if [[ "$COMMENT_BODY" =~ ^/ ]]; then
-            # Remove the slash and use the rest as the label name
+          # Get the current labels on the issue
+          EXISTING_LABELS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER" | jq -r '.labels[].name')
+
+          # Add Label Logic
+          if [[ "$COMMENT_BODY" =~ ^/([^ ]+)$ ]]; then
             LABEL_NAME="${COMMENT_BODY:1}"
 
-            # Use GitHub API to check if the label exists
-            LABELS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                      -H "Accept: application/vnd.github.v3+json" \
-                      "https://api.github.com/repos/${{ github.repository }}/labels")
+            # Fetch all repository labels to check if the requested label exists
+            REPO_LABELS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${{ github.repository }}/labels")
 
-            if echo "$LABELS" | jq -e ".[] | select(.name == \"$LABEL_NAME\")" > /dev/null; then
-              # Add the label to the issue
-              curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" \
-                   -H "Accept: application/vnd.github.v3+json" \
-                   -d "{\"labels\": [\"$LABEL_NAME\"]}" \
-                   "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
+            if echo "$REPO_LABELS" | jq -e ".[] | select(.name == \"$LABEL_NAME\")" > /dev/null; then
+              # Add the new label while keeping existing ones
+              UPDATED_LABELS=$(echo "$EXISTING_LABELS" | jq -R 'split("\n") | . + ["'"$LABEL_NAME"'"] | unique')
+              curl -s -X PATCH -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                -d "{\"labels\": $UPDATED_LABELS}" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
 
               echo "Label '$LABEL_NAME' added to issue #$ISSUE_NUMBER."
             else
               echo "Label '$LABEL_NAME' does not exist in the repository."
             fi
-          else
-            echo "Comment does not start with '/'. No action taken."
+          fi
+
+          # Remove Label Logic
+          if [[ "$COMMENT_BODY" =~ ^/remove[[:space:]](.+)$ ]]; then
+            LABEL_NAME_TO_REMOVE=$(echo "$COMMENT_BODY" | sed -n 's|/remove ||p')
+
+            if echo "$EXISTING_LABELS" | grep -q "^$LABEL_NAME_TO_REMOVE$"; then
+              curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/labels/$LABEL_NAME_TO_REMOVE"
+
+              echo "Label '$LABEL_NAME_TO_REMOVE' removed from issue #$ISSUE_NUMBER."
+            else
+              echo "Label '$LABEL_NAME_TO_REMOVE' does not exist on the issue."
+            fi
           fi
