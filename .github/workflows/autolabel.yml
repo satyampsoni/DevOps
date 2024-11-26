@@ -57,4 +57,4 @@ jobs:
               gh issue edit "$ISSUE_NUMBER" --remove-label "$LABEL_NAME_TO_REMOVE"
               echo "Label '$LABEL_NAME_TO_REMOVE' removed from issue #$ISSUE_NUMBER."
             else
-              echo "Label '$LABEL_NAME_TO_REMOVE' does not exist on the
+              echo "Label '$LABEL_NAME_TO_REMOVE' does not exist on the issue"
