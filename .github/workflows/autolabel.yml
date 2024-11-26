@@ -9,24 +9,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up GitHub CLI
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Install dependencies (including gh CLI)
+      - name: Install GitHub CLI
         run: |
           sudo apt-get install -y jq
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | \
-            sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | \
-            sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-          sudo apt update
-          sudo apt install gh -y
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update && sudo apt install gh -y
 
+      # Step 3: Authenticate GitHub CLI with GITHUB_TOKEN
       - name: Authenticate GitHub CLI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh auth setup-git
           echo $GITHUB_TOKEN | gh auth login --with-token
 
-      - name: Parse and manage labels
+      # Step 4: Parse the comment and manage labels
+      - name: Manage Labels
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -34,19 +37,17 @@ jobs:
           COMMENT_BODY=$(jq -r '.comment.body' "$GITHUB_EVENT_PATH")
           ISSUE_NUMBER=$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")
 
-          # Get the current labels on the issue
-          EXISTING_LABELS=$(gh issue view $ISSUE_NUMBER --json labels -q '.labels[].name')
+          # Get the existing labels on the issue
+          EXISTING_LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '.labels[].name')
 
           # Add Label Logic
           if [[ "$COMMENT_BODY" =~ ^/([^ ]+)$ ]]; then
             LABEL_NAME="${COMMENT_BODY:1}"
 
-            # Fetch all repository labels to check if the requested label exists
-            REPO_LABELS=$(gh label list --json name -q '.[].name')
-
-            if echo "$REPO_LABELS" | grep -qx "$LABEL_NAME"; then
-              # Add the label while keeping existing ones
-              gh issue edit $ISSUE_NUMBER --add-label "$LABEL_NAME"
+            # Check if the label exists in the repository
+            if gh label list --json name -q '.[].name' | grep -q "^$LABEL_NAME$"; then
+              # Add the new label while keeping existing ones
+              gh issue edit "$ISSUE_NUMBER" --add-label "$LABEL_NAME"
               echo "Label '$LABEL_NAME' added to issue #$ISSUE_NUMBER."
             else
               echo "Label '$LABEL_NAME' does not exist in the repository."
@@ -57,11 +58,9 @@ jobs:
           if [[ "$COMMENT_BODY" =~ ^/remove[[:space:]](.+)$ ]]; then
             LABEL_NAME_TO_REMOVE=$(echo "$COMMENT_BODY" | sed -n 's|/remove ||p')
 
-            if echo "$EXISTING_LABELS" | grep -qx "$LABEL_NAME_TO_REMOVE"; then
-              gh issue edit $ISSUE_NUMBER --remove-label "$LABEL_NAME_TO_REMOVE"
+            if echo "$EXISTING_LABELS" | grep -q "^$LABEL_NAME_TO_REMOVE$"; then
+              # Remove the label from the issue
+              gh issue edit "$ISSUE_NUMBER" --remove-label "$LABEL_NAME_TO_REMOVE"
               echo "Label '$LABEL_NAME_TO_REMOVE' removed from issue #$ISSUE_NUMBER."
             else
-              echo "Label '$LABEL_NAME_TO_REMOVE' does not exist on the issue."
-            fi
-          fi
-
+              echo "Label '$LABEL_NAME_TO_REMOVE' does not exist on the
