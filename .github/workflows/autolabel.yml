@@ -13,52 +13,52 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Install GitHub CLI and dependencies
-      - name: Install GitHub CLI and jq
+      # Step 2: Install dependencies (including gh CLI)
+      - name: Install GitHub CLI
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gh jq
+          sudo apt-get install -y jq
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update && sudo apt install gh -y
 
-      # Step 3: Authenticate GitHub CLI
-      - name: Authenticate GitHub CLI
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run:  gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
-
-      # Step 4: Parse comment and manage labels
+      # Step 3: Parse the comment and manage labels
       - name: Manage Labels
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Extract comment body and issue number
+          set -e
+          set -x  # Enable debugging
+
+          # Extract the comment body and issue number
           COMMENT_BODY=$(jq -r '.comment.body' "$GITHUB_EVENT_PATH")
           ISSUE_NUMBER=$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")
 
-          # Only proceed if the comment matches a valid command
-          if [[ "$COMMENT_BODY" =~ ^/(label|remove)([[:space:]].+)?$ ]]; then
-            COMMAND=$(echo "$COMMENT_BODY" | awk '{print $1}')
-            LABEL=$(echo "$COMMENT_BODY" | sed 's/^\/[^ ]*[ ]*//')
+          # Get the existing labels on the issue
+          EXISTING_LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '.labels[].name')
 
-            # Fetch existing labels once
-            EXISTING_LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '.labels[].name')
+          # Add Label Logic
+          if [[ "$COMMENT_BODY" =~ ^/([^ ]+)$ ]]; then
+            LABEL_NAME="${COMMENT_BODY:1}"
 
-            if [[ "$COMMAND" == "/label" ]]; then
-              # Add label if it exists in the repository
-              if gh label list --json name -q '.[].name' | grep -q "^$LABEL$"; then
-                gh issue edit "$ISSUE_NUMBER" --add-label "$LABEL"
-                echo "Label '$LABEL' added to issue #$ISSUE_NUMBER."
-              else
-                echo "Label '$LABEL' does not exist in the repository."
-              fi
-            elif [[ "$COMMAND" == "/remove" ]]; then
-              # Remove label if it exists on the issue
-              if echo "$EXISTING_LABELS" | grep -q "^$LABEL$"; then
-                gh issue edit "$ISSUE_NUMBER" --remove-label "$LABEL"
-                echo "Label '$LABEL' removed from issue #$ISSUE_NUMBER."
-              else
-                echo "Label '$LABEL' is not currently on the issue."
-              fi
+            # Check if the label exists in the repository
+            if gh label list --json name -q '.[].name' | grep -q "^$LABEL_NAME$"; then
+              # Add the new label while keeping existing ones
+              gh issue edit "$ISSUE_NUMBER" --add-label "$LABEL_NAME"
+              echo "Label '$LABEL_NAME' added to issue #$ISSUE_NUMBER."
+            else
+              echo "Label '$LABEL_NAME' does not exist in the repository."
             fi
-          else
-            echo "No valid label command found in the comment."
+          fi
+
+          # Remove Label Logic
+          if [[ "$COMMENT_BODY" =~ ^/remove[[:space:]](.+)$ ]]; then
+            LABEL_NAME_TO_REMOVE=$(echo "$COMMENT_BODY" | sed -n 's|/remove ||p')
+
+            if echo "$EXISTING_LABELS" | grep -q "^$LABEL_NAME_TO_REMOVE$"; then
+              # Remove the label from the issue
+              gh issue edit "$ISSUE_NUMBER" --remove-label "$LABEL_NAME_TO_REMOVE"
+              echo "Label '$LABEL_NAME_TO_REMOVE' removed from issue #$ISSUE_NUMBER."
+            else
+              echo "Label '$LABEL_NAME_TO_REMOVE' does not exist on the issue."  # Missing quote fixed
+            fi
           fi
