@@ -14,13 +14,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 3: Authenticate using GitHub CLI
-      - name: Authenticate with GitHub CLI
+      # Step 4: Parse and manage labels
+      - name: Parse and manage label
         env:
           GH_TOKEN: ${{ secrets.GH_SYSTEMSDT_TOKEN }}
-
-      # Step 4: Parse and manage labels
-      - name: Parse and manage labels
         run: |
           set -e
           set -x  # Enable debugging
