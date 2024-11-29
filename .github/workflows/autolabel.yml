@@ -31,7 +31,8 @@ jobs:
 
           ORG_NAME="satyam-tests"
 
-          MEMBERSHIP_STATUS=$(gh api "orgs/$ORG_NAME/memberships/$COMMENT_AUTHOR" --silent --field state)
+          # Fetch membership status
+          MEMBERSHIP_STATUS=$(gh api "orgs/$ORG_NAME/memberships/$COMMENT_AUTHOR" --silent | jq -r '.state')
           
           if [[ "$MEMBERSHIP_STATUS" != "active" ]]; then
             gh issue comment "$ISSUE_NUMBER" --body "Hi @$COMMENT_AUTHOR, you must be an active member of the organization '$ORG_NAME' to add or remove labels."
@@ -40,6 +41,7 @@ jobs:
           fi
           
           echo "User '$COMMENT_AUTHOR' is a verified active member of the organization '$ORG_NAME'."
+
 
           # Get the existing labels on the issue
           EXISTING_LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '.labels[].name')
