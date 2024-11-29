@@ -7,6 +7,7 @@ on:
 permissions:
   contents: write
   issues: write
+  org: read
 
 jobs:
   manage-labels:
@@ -31,17 +32,20 @@ jobs:
 
           ORG_NAME="satyam-tests"
 
-          # Fetch the list of authorized users from the members.txt file
-          AUTHORIZED_MEMBERS=$(cat .github/workflows/members.txt)
+          # Fetch membership status
+          MEMBERSHIP_STATUS=$(gh api "orgs/$ORG_NAME/memberships/$COMMENT_AUTHOR" --silent | jq -r '.state')
 
-          # Check if the COMMENT_AUTHOR is in the authorized members list
-          if ! echo "$AUTHORIZED_MEMBERS" | grep -qw "$COMMENT_AUTHOR"; then
-            gh issue comment "$ISSUE_NUMBER" --body "Hi @$COMMENT_AUTHOR, you must be an authorized member to add or remove labels in the organization '$ORG_NAME'."
-            echo "User '$COMMENT_AUTHOR' is not authorized to add or remove labels. Exiting."
+          RAW_RESPONSE=$(gh api "orgs/$ORG_NAME/memberships/$COMMENT_AUTHOR" --silent || echo "Error fetching membership")
+          echo "Raw API Response: $RAW_RESPONSE"
+
+          if [[ "$MEMBERSHIP_STATUS" != "active" ]]; then
+            gh issue comment "$ISSUE_NUMBER" --body "Hi @$COMMENT_AUTHOR, you must be an active member of the organization '$ORG_NAME' to add or remove labels."
+            echo "User '$COMMENT_AUTHOR' is not an active member of the organization '$ORG_NAME'. Exiting."
             exit 1
           fi
+          
+          echo "User '$COMMENT_AUTHOR' is a verified active member of the organization '$ORG_NAME'."
 
-          echo "User '$COMMENT_AUTHOR' is an authorized member of the organization '$ORG_NAME'."
 
           # Get the existing labels on the issue
           EXISTING_LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '.labels[].name')
