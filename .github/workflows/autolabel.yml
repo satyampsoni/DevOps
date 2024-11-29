@@ -31,14 +31,15 @@ jobs:
 
           ORG_NAME="satyam-tests"
 
-          # Check if the comment author is a member of the organization
-          if ! gh api "orgs/$ORG_NAME/members/$COMMENT_AUTHOR" --silent > /dev/null 2>&1; then
-            gh issue comment "$ISSUE_NUMBER" --body "Hi @$COMMENT_AUTHOR, you must be a member of the organization '$ORG_NAME' to add or remove labels."
-            echo "User '$COMMENT_AUTHOR' is not a member of the organization '$ORG_NAME'. Exiting."
+          MEMBERSHIP_STATUS=$(gh api "orgs/$ORG_NAME/memberships/$COMMENT_AUTHOR" --silent --field state)
+          
+          if [[ "$MEMBERSHIP_STATUS" != "active" ]]; then
+            gh issue comment "$ISSUE_NUMBER" --body "Hi @$COMMENT_AUTHOR, you must be an active member of the organization '$ORG_NAME' to add or remove labels."
+            echo "User '$COMMENT_AUTHOR' is not an active member of the organization '$ORG_NAME'. Exiting."
             exit 1
           fi
-
-          echo "User '$COMMENT_AUTHOR' is a verified member of the organization '$ORG_NAME'. Processing labels."
+          
+          echo "User '$COMMENT_AUTHOR' is a verified active member of the organization '$ORG_NAME'."
 
           # Get the existing labels on the issue
           EXISTING_LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '.labels[].name')
