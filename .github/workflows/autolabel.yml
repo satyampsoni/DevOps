@@ -33,7 +33,10 @@ jobs:
 
           # Fetch membership status
           MEMBERSHIP_STATUS=$(gh api "orgs/$ORG_NAME/memberships/$COMMENT_AUTHOR" --silent | jq -r '.state')
-          
+
+          RAW_RESPONSE=$(gh api "orgs/$ORG_NAME/memberships/$COMMENT_AUTHOR" --silent || echo "Error fetching membership")
+          echo "Raw API Response: $RAW_RESPONSE"
+
           if [[ "$MEMBERSHIP_STATUS" != "active" ]]; then
             gh issue comment "$ISSUE_NUMBER" --body "Hi @$COMMENT_AUTHOR, you must be an active member of the organization '$ORG_NAME' to add or remove labels."
             echo "User '$COMMENT_AUTHOR' is not an active member of the organization '$ORG_NAME'. Exiting."
