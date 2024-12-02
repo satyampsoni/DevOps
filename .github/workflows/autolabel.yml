@@ -7,6 +7,7 @@ on:
 jobs:
   manage-labels:
     if: ${{ !github.event.issue.pull_request }}
+    environment: github-action
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -20,7 +21,7 @@ jobs:
 
       - name: Parse and manage labels
         env:
-          GH_TOKEN: ${{ secrets.ORG_MEMBERSHIP_TOKEN }} # Use the custom token
+          GH_TOKEN: ${{ secrets.github-action }} # Use the custom token
         run: |
           set -e
           set -x  # Enable debugging
