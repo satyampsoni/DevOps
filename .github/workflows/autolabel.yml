@@ -9,19 +9,13 @@ jobs:
     if: ${{ !github.event.issue.pull_request }}
     runs-on: ubuntu-latest
 
-    permissions:
-      issues: write
-      contents: read
-      pull-requests: write
-      repository-projects: read
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Parse and manage labels
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ORG_MEMBERSHIP_TOKEN }}
         run: |
           set -e
           set -x  # Enable debugging
