@@ -17,6 +17,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Configure GitHub CLI
+        run: |
+          gh auth login --with-token <<< "$GH_TOKEN"
+
       - name: Parse and manage labels
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -31,6 +35,8 @@ jobs:
 
           ORG_NAME="satyam-tests"
 
+          echo "Validating membership for user '$COMMENT_AUTHOR' in organization '$ORG_NAME'."
+
           # Check if the user is an organization member
           if ! gh api "orgs/$ORG_NAME/members/$COMMENT_AUTHOR" --silent; then
             gh issue comment "$ISSUE_NUMBER" --body "Hi @$COMMENT_AUTHOR, you must be a member of the organization '$ORG_NAME' to add or remove labels."
@@ -41,7 +47,7 @@ jobs:
 
           echo "User '$COMMENT_AUTHOR' is a verified member of the organization '$ORG_NAME'. Adding or removing labels."
 
-          # Get the existing labels on the issue 
+          # Get the existing labels on the issue
           EXISTING_LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels -q '.labels[].name')
 
           # Add Label Logic
