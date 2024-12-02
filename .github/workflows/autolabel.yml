@@ -20,7 +20,7 @@ jobs:
 
       - name: Parse and manage labels
         env:
-          GH_TOKEN: ${{ secrets.org_membership_token }} # Use the custom token
+          GH_TOKEN: ${{ secrets.ORG_MEMBERSHIP_TOKEN }} # Use the custom token
         run: |
           set -e
           set -x  # Enable debugging
