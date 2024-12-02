@@ -9,6 +9,12 @@ jobs:
     if: ${{ !github.event.issue.pull_request }}
     runs-on: ubuntu-latest
 
+    permissions:
+      issues: write
+      contents: read
+      pull-requests: write
+      repository-projects: read
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
